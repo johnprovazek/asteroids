@@ -45,10 +45,10 @@ var astroidAngle = new Array(NUM_ASTROIDS);   // Angle the astroid is traveling.
 var X_ASTROID = new Array(NUM_ASTROIDS);      // X-coordinate of astroids.
 var Y_ASTROID = new Array(NUM_ASTROIDS);      // Y-coordinate of astroids.
 var scoreCounter = 0;                         // Number of astroids hit.
-var laserSound = new Audio('Laser.mp3');
-var astroidSound = new Audio('astcrash.mp3');
-var deathSound = new Audio('death.mp3');
-var tenPointsSound = new Audio('10points.wav');
+var laserSound = new Audio('lib/sound/Laser.mp3');
+var astroidSound = new Audio('lib/sound/astcrash.mp3');
+var deathSound = new Audio('lib/sound/death.mp3');
+var tenPointsSound = new Audio('lib/sound/10points.wav');
 //var gameStartSound = new Audio('../resources/game-start.mp3');
 
 
@@ -869,10 +869,10 @@ function initTextures(gl) {
   imageYellow.onload = function(){ loadTexture(gl, texture2, imageYellow, 2);};
   imageSpace.onload = function(){ loadTexture(gl, texture3, imageSpace, 3);};
   // Tell the browser to load images.
-  imageShip.src = 'ship.jpg';
-  imageAst.src = 'astroid1.jpg';
-  imageYellow.src = 'yellow.jpg';
-  imageSpace.src = 'space.jpg';
+  imageShip.src = 'lib/textures/ship.jpg';
+  imageAst.src = 'lib/textures/astroid1.jpg';
+  imageYellow.src = 'lib/textures/yellow.jpg';
+  imageSpace.src = 'lib/textures/space.jpg';
   return true;
 }
 

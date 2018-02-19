@@ -11,6 +11,7 @@ This argument allows chrome to access files from your computer. If you are
 concerned about security the code is additionally hosted online:
 
 [Asteroids without textures](http://www.ecst.csuchico.edu/~jprovazek/asteroidsNoText.html)
+
 [Asteroids with textures and sound](http://www.ecst.csuchico.edu/~jprovazek/asteroids.html)
 
 ## Contributing

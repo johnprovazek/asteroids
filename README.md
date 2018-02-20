@@ -1,4 +1,4 @@
-# Asteroids
+﻿# Asteroids
 
 A recreation and expanded upon version of the classic Atari 2600 Asteroids game.
 These games were both developed with WebGL and javascript.
@@ -12,7 +12,17 @@ concerned about security the code is additionally hosted online:
 
 [Asteroids without textures](http://www.ecst.csuchico.edu/~jprovazek/asteroidsNoText.html)
 
+![](https://i.imgur.com/IQY8IZH.gifv)
+
 [Asteroids with textures and sound](http://www.ecst.csuchico.edu/~jprovazek/asteroids.html)
+
+![](https://i.imgur.com/XvSInnl.gifv)
+
+## Game Instructions
+
+WASD keys to control ship.
+Mouse curser to aim ship.
+Click to shoot laser.
 
 ## Contributing
 

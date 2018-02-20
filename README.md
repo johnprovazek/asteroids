@@ -12,11 +12,11 @@ concerned about security the code is additionally hosted online:
 
 [Asteroids without textures](http://www.ecst.csuchico.edu/~jprovazek/asteroidsNoText.html)
 
-![](https://i.imgur.com/IQY8IZH.gif)
+![](https://i.imgur.com/IQY8IZH.gif =250x250)
 
 [Asteroids with textures and sound](http://www.ecst.csuchico.edu/~jprovazek/asteroids.html)
 
-![](https://i.imgur.com/XvSInnl.gif)
+![](https://i.imgur.com/XvSInnl.gif =250x250)
 
 ## Game Instructions
 

@@ -16,7 +16,7 @@ concerned about security the code is additionally hosted online:
 
 [Asteroids with textures and sound](http://www.ecst.csuchico.edu/~jprovazek/asteroids.html)
 
-![](https://i.imgur.com/GH0sGMH.gif)
+![](https://i.imgur.com/2uxO6g2.gif)
 
 ## Game Instructions
 

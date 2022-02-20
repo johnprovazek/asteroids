@@ -1,36 +1,40 @@
 ﻿# Asteroids
 
-A recreation and expanded upon version of the classic Atari 2600 Asteroids game.
-These games were both developed with WebGL and javascript.
+## Description
 
-## Getting Started
+This project is a recreation and expanded upon version of the classic Atari 2600 game Asteroids.
+This project was developed for a computer graphics course at CSU Chico. This project utilizes javascript and WebGL.
 
-To run on your own computer launch chrome from the command line with the
-argument "–allow-file-access-from-files", then open either of the html files.
-This argument allows chrome to access files from your computer. If you are
-concerned about security, the code is additionally hosted online:
+## Installation
 
-[Asteroids without textures](http://www.ecst.csuchico.edu/~jprovazek/asteroidsNoText.html)
+If you would like to access my website it can be found at [johnprovazek.com/asteroids](https://www.johnprovazek.com/asteroids).
 
-![](https://i.imgur.com/GH0sGMH.gif)
-
-[Asteroids with textures and sound](http://www.ecst.csuchico.edu/~jprovazek/asteroids.html)
+## Usage
 
 ![](https://i.imgur.com/2uxO6g2.gif)
 
-## Game Instructions
+### Controls: 
 
-WASD keys to control ship.
-Mouse curser to aim ship.
-Click to shoot laser.
 
-## Contributing
 
-I used the following resources were taken from the book "WebGL Programming
+- WASD to move
+- Mouse to aim
+- Left-click to shoot. 
+
+To restart the game you will need to refresh the page.
+
+## Credits
+
+The following resources were taken from the book "WebGL Programming
 Guide: Interactive 3D Graphics Programming with WebGL" writen by Kouichi Matsuda
-& Rodger Lea.
+& Rodger Lea:
 
-cuon-matrix.js
-cuon-utils.js
-webgl-debug.js
-webgl-utils.js
+- cuon-matrix.js
+- cuon-utils.js
+- webgl-debug.js
+- webgl-utils.js
+
+
+## License
+
+No License for now until I have a better understanding of this. Would like this to be free for non commercial use.

@@ -15,8 +15,6 @@ If you would like to access my website it can be found at [johnprovazek.com/aste
 
 ### Controls: 
 
-
-
 - WASD to move
 - Mouse to aim
 - Left-click to shoot. 
@@ -34,6 +32,12 @@ Guide: Interactive 3D Graphics Programming with WebGL" writen by Kouichi Matsuda
 - webgl-debug.js
 - webgl-utils.js
 
+## Bugs & Features
+
+- First few moves of the game will push ship out too far
+- Clean up the html and make it more user friendly
+- Fix code so you don't need to refresh to replay
+- Implement a leaderboard
 
 ## License
 

@@ -34,7 +34,7 @@ Guide: Interactive 3D Graphics Programming with WebGL" writen by Kouichi Matsuda
 
 ## Bugs & Features
 
-- First few moves of the game will push ship out too far.
+- First few moves of the game will push ship out to far.
 - Clean up the html and make it more user friendly.
 - Fix code so you don't need to refresh to replay.
 - Implement a leaderboard.

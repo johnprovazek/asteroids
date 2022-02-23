@@ -1,9 +1,11 @@
-﻿# Asteroids
+# Asteroids
 
 ## Description
 
 This project is a recreation and expanded upon version of the classic Atari 2600 game Asteroids.
-This project was developed for a computer graphics course at CSU Chico. This project utilizes javascript and WebGL.
+This project was developed for a computer graphics course at CSU Chico. 
+
+Built using vanilla javascript and WebGL.
 
 ## Installation
 

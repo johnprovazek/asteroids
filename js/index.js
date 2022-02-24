@@ -49,12 +49,32 @@ var laserSound = new Audio('./sound/laser.mp3');
 var astroidSound = new Audio('./sound/astcrash.mp3');
 var deathSound = new Audio('./sound/death.mp3');
 var tenPointsSound = new Audio('./sound/10points.wav');
-//var gameStartSound = new Audio('../resources/game-start.mp3');
+var loopMusicSound = new Audio('../sound/loopmusic.mp3');
+loopMusicSound.loop = true;
+
+
 
 
 function main()
 {
-    // gameStartSound.play();
+
+    document.body.addEventListener("mousemove", function () {
+        // loopMusicSound.play()
+    })
+
+    // Handling tv canvas
+    var tv_canvas = document.getElementById('tv'),
+    tv_context = tv_canvas.getContext('2d');
+    make_base();
+    function make_base()
+    {
+        base_image = new Image();
+        base_image.src = 'img/tv.png';
+        base_image.onload = function(){
+            tv_context.drawImage(base_image, 0, 0);
+        }
+    }
+
     // Retrieve <canvas> element.
     var canvas = document.getElementById('webgl');
     // Get the rendering context for WebGL.
@@ -116,6 +136,14 @@ function main()
     // holds data on the state of keypresses
     var keyState = {};
 
+    // Event Listener to start the game
+    // document.addEventListener("keypress", function(event) {
+    //     if(event.keyCode == 32){
+    //         tick();
+    //     }
+    // });
+
+
     // Event listener for keydown
     document.addEventListener('keydown',function(e){
         keyState[e.keyCode || e.which] = true;
@@ -125,14 +153,24 @@ function main()
         keyState[e.keyCode || e.which] = false;
     },true);
     // Event listener for mouse clicks
-    canvas.addEventListener('click',function(e){
+    document.addEventListener('click',function(e){
         triggerPull = true;
     },true);
     // Event listener for mouse movement
-    canvas.addEventListener('mousemove',function(e){
-        var rect = e.target.getBoundingClientRect() ;
+    document.addEventListener('mousemove',function(e){
+        var rect = e.target.getBoundingClientRect();
         X_CURSER = ((e.pageX - rect.left) - canvas.width/2)/(canvas.width/2);
         Y_CURSER = (canvas.height/2 - (e.pageY - rect.top))/(canvas.height/2);
+
+        // x_test = scale(e.pageX, 0 , window.innerWidth, -1, 1)
+        // y_test = scale(e.pageY, 0 , window.innerHeight, 1, -1)
+        // function scale (number, inMin, inMax, outMin, outMax) {
+        //     return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+        // }
+        // X_CURSER = x_test
+        // Y_CURSER = y_test
+
+
     },true);
 
     var isStoppedXleft = true;  // Is the ship stopped in the left direction.
@@ -150,6 +188,7 @@ function main()
     //main game loop
     var tick = function()
     {
+
         // Finding the current angle of the ship based on the curser.
         currentAngle = Math.atan2(Y_CURSER - Y_SHIP, X_CURSER - X_SHIP) * 180 /
                                                                 Math.PI - 90;
@@ -342,9 +381,9 @@ function main()
         if (distance < circle1.radius + circle2.radius)
         {
             deathSound.play();
-            document.getElementById("Title").innerHTML = "GAME OVER.  " +
-                                                    "\"Cntl + R\" to play again.";
-            document.getElementById("Score").innerHTML = "Score: " + scoreCounter;
+            // document.getElementById("Title").innerHTML = "GAME OVER.  " +
+            //                                         "\"Cntl + R\" to play again.";
+            // document.getElementById("Score").innerHTML = "Score: " + scoreCounter;
             stillAlive = false;
         }
         }
@@ -369,7 +408,7 @@ function main()
                     tenPointsSound.play();
                     // Future implementation: add more astroids to game here.
                 }
-                document.getElementById("Score").innerHTML = "Score: " + scoreCounter;
+                // document.getElementById("Score").innerHTML = "Score: " + scoreCounter;
                 }
             }
         }

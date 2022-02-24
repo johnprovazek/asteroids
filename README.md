@@ -1,4 +1,4 @@
-# Asteroids
+﻿# Asteroids
 
 ## Description
 
@@ -13,7 +13,6 @@ If you would like to access my website it can be found at [johnprovazek.com/aste
 
 ## Usage
 
-![](https://i.imgur.com/2uxO6g2.gif)
 
 ### Controls: 
 
@@ -34,10 +33,9 @@ Guide: Interactive 3D Graphics Programming with WebGL" writen by Kouichi Matsuda
 - webgl-debug.js
 - webgl-utils.js
 
-## Bugs & Features
+## Bugs & Improvements
 
 - The first few moves of the game will push the ship out too far.
-- Clean up the html and make it more user friendly.
 - Fix code so you don't need to refresh to replay.
 - Implement a leaderboard.
 

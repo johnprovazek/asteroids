@@ -25,152 +25,144 @@ var FSHADER_SOURCE =
     '  gl_FragColor = texture2D(u_Sampler, v_TexCoord);\n' +
     '}\n';
 
-var NUM_ASTROIDS = 5;    // Number of astroids.
-var X_SHIP = 0.0;        // X-coordinate of ship.
-var Y_SHIP = 0.0;        // Y-coordinate of ship.
-var X_CURSER = 0.0;      // X-coordinate of mouse curser.
-var Y_CURSER = 1.0;      // Y-coordinate of mouse curser.
+var NUM_ASTROIDS = 5;  // Number of astroids.
+var X_SHIP = 0.0;  // X-coordinate of ship.
+var Y_SHIP = 0.0;  // Y-coordinate of ship.
+var X_CURSER = 0.0;  // X-coordinate of mouse curser.
+var Y_CURSER = 1.0;  // Y-coordinate of mouse curser.
 var triggerPull = false; // Boolean value set to whether mouse is clicked.
-var laserBuffer;         // Shouldn't be global.
-var shipBuffer;          // Shouldn't be global.
-var backgroundBuffer;    // Shouldn't be global.
+var laserBuffer;  // Shouldn't be global.
+var shipBuffer;  // Shouldn't be global.
+var backgroundBuffer;  // Shouldn't be global.
 var astroidBuffer = new Array(NUM_ASTROIDS);  // Shouldn't be global.
-var a_Position;          // Shader vertices.
-var a_TexCoord;          // Shader texture vertices.
-var FSIZE;               // Bytes per element of vertices arrays.
+var a_Position;  // Shader vertices.
+var a_TexCoord;  // Shader texture vertices.
+var FSIZE;  // Bytes per element of vertices arrays.
 var backgroundVertices;
 var laserVertices;
 var astroidVertices = new Array(NUM_ASTROIDS);
-var astroidAngle = new Array(NUM_ASTROIDS);   // Angle the astroid is traveling.
-var X_ASTROID = new Array(NUM_ASTROIDS);      // X-coordinate of astroids.
-var Y_ASTROID = new Array(NUM_ASTROIDS);      // Y-coordinate of astroids.
-var scoreCounter = 0;                         // Number of astroids hit.
-var laserSound = new Audio('./sound/laser.mp3');
-var astroidSound = new Audio('./sound/astcrash.mp3');
-var deathSound = new Audio('./sound/death.mp3');
-var tenPointsSound = new Audio('./sound/10points.wav');
-var loopMusicSound = new Audio('../sound/loopmusic.mp3');
-loopMusicSound.loop = true;
+var astroidAngle = new Array(NUM_ASTROIDS);  // Angle the asteroid is traveling.
+var X_ASTROID = new Array(NUM_ASTROIDS);  // X-coordinate of asteroids.
+var Y_ASTROID = new Array(NUM_ASTROIDS);  // Y-coordinate of asteroids.
+var scoreCounter = 0;  // Number of astroids hit.
+var laserSound = new Audio('./sound/laser.mp3');  // Laser sound.
+var astroidSound = new Audio('./sound/astcrash.mp3');  // Asteroid hit sound.
+var deathSound = new Audio('./sound/death.mp3');  // Ship hit sounds.
+var tenPointsSound = new Audio('./sound/10points.wav');  // Sound played every 10 points.
+var loopMusicSound = new Audio('../sound/loopmusic.mp3');  // Background game music.
+var StartMenuActive = true; // Boolean value set to true when the start menu is active
 
-
-
-
+// Main function triggered onload.
 function main()
 {
-
+    // Configure background game music.
+    loopMusicSound.loop = true;
     document.body.addEventListener("mousemove", function () {
         // loopMusicSound.play()
     })
 
-    // Handling tv canvas
+    // Setting up canvas for TV wrapper.
     var tv_canvas = document.getElementById('tv'),
     tv_context = tv_canvas.getContext('2d');
-    make_base();
-    function make_base()
-    {
-        base_image = new Image();
-        base_image.src = 'img/tv.png';
-        base_image.onload = function(){
-            tv_context.drawImage(base_image, 0, 0);
-        }
+    tv_image = new Image();
+    tv_image.src = 'img/tv.png';
+    tv_image.onload = function() {
+        tv_context.drawImage(tv_image, 0, 0);
     }
 
-    // Retrieve <canvas> element.
+    // Setting up canvas for main WebGL game.
     var canvas = document.getElementById('webgl');
+
     // Get the rendering context for WebGL.
     var gl = getWebGLContext(canvas);
-    if (!gl)
-    {
+    if (!gl) {
         console.log('Failed to get the rendering context for WebGL');
         return;
     }
 
     // Initialize shaders.
-    if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE))
-    {
+    if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
         console.log('Failed to intialize shaders.');
         return;
     }
+
     // Initializes ship.
     var num_ship_vertices = initShipBuffer(gl);
-    if (num_ship_vertices < 0)
-    {
+    if (num_ship_vertices < 0) {
         console.log('Failed to set the positions of the vertices');
         return;
     }
+
     // Initializes astroids.
     var num_astroid_vertices
-    for(var i = 0; i < NUM_ASTROIDS; i++)
-    {
+    for(var i = 0; i < NUM_ASTROIDS; i++) {
         num_astroid_vertices = initAstroidBuffers(gl, i);
-        if (num_astroid_vertices < 0)
-        {
+        if (num_astroid_vertices < 0) {
             console.log('Failed to set the positions of the astroids');
             return;
         }
     }
-    //Initializes the moving space background.
+
+    // Initializes the moving space background.
     var num_background = initBackgroundBuffer(gl);
-    if (num_background < 0)
-    {
+    if (num_background < 0) {
         console.log('Failed to set up the background properly');
         return;
     }
+
     // Sets up all the textures for the game.
     if (!initTextures(gl)) {
         console.log('Failed to intialize the texture.');
         return;
     }
-    // Get storage location of u_ModelMatrix
+
+    // Get storage location of u_ModelMatrix.
     var u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
-    if (!u_ModelMatrix)
-    {
+    if (!u_ModelMatrix) {
         console.log('Failed to get the storage location of u_ModelMatrix');
         return;
     }
 
-    // Current rotation angle
+    // Setting current rotation angle.
     var currentAngle = 0.0;
-    // Model matrix
+
+    // Model matrix.
     var modelMatrix = new Matrix4();
-    // holds data on the state of keypresses
+
+    // Holds data on the state of keypresses.
     var keyState = {};
 
-    // Event Listener to start the game
-    // document.addEventListener("keypress", function(event) {
-    //     if(event.keyCode == 32){
-    //         tick();
-    //     }
-    // });
+    // Event Listener to start the game when an Enter is pressed.
+    document.addEventListener("keypress", function(event) {
+        if(StartMenuActive && event.keyCode == 32){
+            tick();
+            StartMenuActive = false;
+        }
+        // Configure background game music.
+        // loopMusicSound.loop = true;
+        // loopMusicSound.play()
+    });
 
-
-    // Event listener for keydown
-    document.addEventListener('keydown',function(e){
+    // Event listener for keydown.
+    document.addEventListener('keydown',function(e) {
         keyState[e.keyCode || e.which] = true;
     },true);
-    // Event listener for keyup
-    document.addEventListener('keyup',function(e){
+
+    // Event listener for keyup.
+    document.addEventListener('keyup',function(e) {
         keyState[e.keyCode || e.which] = false;
     },true);
-    // Event listener for mouse clicks
-    document.addEventListener('click',function(e){
+
+    // Event listener for mouse clicks.
+    document.addEventListener('click',function(e) {
         triggerPull = true;
     },true);
-    // Event listener for mouse movement
-    document.addEventListener('mousemove',function(e){
+
+    // Event listener for mouse movement.
+    document.addEventListener('mousemove',function(e) {
         var rect = e.target.getBoundingClientRect();
         X_CURSER = ((e.pageX - rect.left) - canvas.width/2)/(canvas.width/2);
         Y_CURSER = (canvas.height/2 - (e.pageY - rect.top))/(canvas.height/2);
-
-        // x_test = scale(e.pageX, 0 , window.innerWidth, -1, 1)
-        // y_test = scale(e.pageY, 0 , window.innerHeight, 1, -1)
-        // function scale (number, inMin, inMax, outMin, outMax) {
-        //     return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-        // }
-        // X_CURSER = x_test
-        // Y_CURSER = y_test
-
-
     },true);
 
     var isStoppedXleft = true;  // Is the ship stopped in the left direction.
@@ -184,237 +176,198 @@ function main()
     var laserAngle;             // Angle of the laser when it was first shot.
     var stillAlive = true;      // Is the game still going.
 
+    // Main menu loop.
+    var mainmenu = function()
+    {
+        // Drawing MainMenu
+        if(StartMenuActive && g_texUnit4) {
+            drawMainMenu(gl, num_background, modelMatrix, u_ModelMatrix);
+        }
+        requestAnimationFrame(mainmenu, canvas);
+    }
 
-    //main game loop
+    // Main game loop.
     var tick = function()
     {
-
         // Finding the current angle of the ship based on the curser.
-        currentAngle = Math.atan2(Y_CURSER - Y_SHIP, X_CURSER - X_SHIP) * 180 /
-                                                                Math.PI - 90;
+        currentAngle = Math.atan2(Y_CURSER - Y_SHIP, X_CURSER - X_SHIP) * 180 / Math.PI - 90;
+
         // Checking if the user has clicked the mouse prompting a laser to be made.
-        if(triggerPull == true)
-        {
-        laserSound.play();
-        initlaserBuffer(gl, currentAngle);
-        triggerPull = false;
-        inRange = true;
-        laserAngle = currentAngle;
+        if(triggerPull == true) {
+            laserSound.play();
+            initlaserBuffer(gl, currentAngle);
+            triggerPull = false;
+            inRange = true;
+            laserAngle = currentAngle;
         }
 
-        // The following statemnet handle moving the ship. Needs improvement.
-        // Error with first couple ship movements and code could be more efficient.
-
+        // TODO: Error with first couple ship movements and code could be more efficient.
+        // Handling moving ship.
         // Moving ship left.
-        if (keyState[65])
-        {
-        X_SHIP = X_SHIP + speedX;
-        if(speedX > -0.02)
-        {
-            speedX = speedX - 0.001;
-        }
-        if(X_SHIP < -1.0)
-        {
-            X_SHIP = -1.0;
-        }
-        isStoppedXleft = false;
+        if (keyState[65]) {
+            X_SHIP = X_SHIP + speedX;
+            if(speedX > -0.02) {
+                speedX = speedX - 0.001;
+            }
+            if(X_SHIP < -1.0) {
+                X_SHIP = -1.0;
+            }
+            isStoppedXleft = false;
         }
         // Moving ship right.
-        if (keyState[68])
-        {
-        X_SHIP = X_SHIP + speedX;
-        if(speedX < 0.02)
-        {
-            speedX = speedX + 0.001;
-        }
-        if(X_SHIP > 1.0)
-        {
-            X_SHIP = 1.0;
-        }
-        isStoppedXright = false;
+        if (keyState[68]) {
+            X_SHIP = X_SHIP + speedX;
+            if(speedX < 0.02) {
+                speedX = speedX + 0.001;
+            }
+            if(X_SHIP > 1.0) {
+                X_SHIP = 1.0;
+            }
+            isStoppedXright = false;
         }
         //  Moving ship down.
-        if (keyState[83])
-        {
-        Y_SHIP = Y_SHIP + speedY;
-        if(speedY > -0.02)
-        {
-            speedY = speedY - 0.001;
-        }
-        if(Y_SHIP < -1.0)
-        {
-            Y_SHIP = -1.0;
-        }
-        isStoppedYdown = false;
+        if (keyState[83]) {
+            Y_SHIP = Y_SHIP + speedY;
+            if(speedY > -0.02) {
+                speedY = speedY - 0.001;
+            }
+            if(Y_SHIP < -1.0) {
+                Y_SHIP = -1.0;
+            }
+            isStoppedYdown = false;
         }
         //  Moving ship up.
-        if (keyState[87])
-        {
-        Y_SHIP = Y_SHIP + speedY;
-        if(speedY < 0.02)
-        {
-            speedY = speedY + 0.001;
-        }
-        if(Y_SHIP > 1.0)
-        {
-            Y_SHIP = 1.0;
-        }
-        isStoppedYup = false;
+        if (keyState[87]) {
+            Y_SHIP = Y_SHIP + speedY;
+            if(speedY < 0.02) {
+                speedY = speedY + 0.001;
+            }
+            if(Y_SHIP > 1.0) {
+                Y_SHIP = 1.0;
+            }
+            isStoppedYup = false;
         }
         // Stopping ship left.
-        if (keyState[65] == false && isStoppedXleft == false &&
-            keyState[68] == false)
-        {
-        X_SHIP = X_SHIP + speedX;
-        if(speedX < 0.0)
-        {
-            speedX = speedX + 0.001;
-        }
-        if(speedX == 0.0)
-        {
-            isStoppedXleft == true;
-        }
-        if(X_SHIP < -1.0)
-        {
-            X_SHIP = -1.0;
-        }
+        if (keyState[65] == false && isStoppedXleft == false && keyState[68] == false) {
+            X_SHIP = X_SHIP + speedX;
+            if(speedX < 0.0) {
+                speedX = speedX + 0.001;
+            }
+            if(speedX == 0.0) {
+                isStoppedXleft == true;
+            }
+            if(X_SHIP < -1.0) {
+                X_SHIP = -1.0;
+            }
         }
         // Stopping ship right.
-        if (keyState[68] == false && isStoppedXright == false &&
-            keyState[65] == false)
-        {
-        X_SHIP = X_SHIP + speedX;
-        if(speedX > 0.0)
-        {
-            speedX = speedX - 0.001;
-        }
-        if(speedX == 0.0)
-        {
-            isStoppedXright == true;
-        }
-        if(X_SHIP > 1.0)
-        {
-            X_SHIP = 1.0;
-        }
+        if (keyState[68] == false && isStoppedXright == false && keyState[65] == false) {
+            X_SHIP = X_SHIP + speedX;
+            if(speedX > 0.0) {
+                speedX = speedX - 0.001;
+            }
+            if(speedX == 0.0) {
+                isStoppedXright == true;
+            }
+            if(X_SHIP > 1.0) {
+                X_SHIP = 1.0;
+            }
         }
         // Stopping ship down.
-        if (keyState[83] == false && isStoppedYdown == false &&
-            keyState[87] == false)
-        {
-        Y_SHIP = Y_SHIP + speedY
-        if(speedY < 0.0)
-        {
-            speedY = speedY + 0.001;
-        }
-        if(speedY == 0.0)
-        {
-            isStoppedYdown == true;
-        }
-        if(Y_SHIP < -1.0)
-        {
-            Y_SHIP = -1.0;
-        }
+        if (keyState[83] == false && isStoppedYdown == false && keyState[87] == false) {
+            Y_SHIP = Y_SHIP + speedY
+            if(speedY < 0.0) {
+                speedY = speedY + 0.001;
+            }
+            if(speedY == 0.0) {
+                isStoppedYdown == true;
+            }
+            if(Y_SHIP < -1.0) {
+                Y_SHIP = -1.0;
+            }
         }
         // Stopping ship up.
-        if (keyState[87] == false && isStoppedYup == false && keyState[83] == false)
-        {
-        Y_SHIP = Y_SHIP + speedY;
-        if(speedY > 0.0)
-        {
-            speedY = speedY - 0.001;
-        }
-        if(speedX == 0.0)
-        {
-            isStoppedYup == true;
-        }
-        if(Y_SHIP > 1.0)
-        {
-            Y_SHIP = 1.0;
-        }
+        if (keyState[87] == false && isStoppedYup == false && keyState[83] == false) {
+            Y_SHIP = Y_SHIP + speedY;
+            if(speedY > 0.0) {
+                speedY = speedY - 0.001;
+            }
+            if(speedX == 0.0) {
+                isStoppedYup == true;
+            }
+            if(Y_SHIP > 1.0) {
+                Y_SHIP = 1.0;
+            }
         }
 
         // Moving background in the X direction.
-        if(isStoppedXleft == false || isStoppedXright == false)
-        {
-        backgroundVertices[2] = 0.75 +  (X_SHIP)/8;
-        backgroundVertices[6] = 0.75 +  (X_SHIP)/8;
-        backgroundVertices[10] = 0.25 + (X_SHIP)/8;
-        backgroundVertices[14] = 0.25 + (X_SHIP)/8;
+        if(isStoppedXleft == false || isStoppedXright == false) {
+            backgroundVertices[2] = 0.75 +  (X_SHIP)/8;
+            backgroundVertices[6] = 0.75 +  (X_SHIP)/8;
+            backgroundVertices[10] = 0.25 + (X_SHIP)/8;
+            backgroundVertices[14] = 0.25 + (X_SHIP)/8;
         }
         // Moving background in the Y direction.
-        if(isStoppedYup == false || isStoppedYdown == false)
-        {
-        backgroundVertices[3] = 0.75 +  (Y_SHIP)/8;
-        backgroundVertices[7] = 0.25 +  (Y_SHIP)/8;
-        backgroundVertices[11] = 0.75 + (Y_SHIP)/8;
-        backgroundVertices[15] = 0.25 + (Y_SHIP)/8;
+        if(isStoppedYup == false || isStoppedYdown == false) {
+            backgroundVertices[3] = 0.75 +  (Y_SHIP)/8;
+            backgroundVertices[7] = 0.25 +  (Y_SHIP)/8;
+            backgroundVertices[11] = 0.75 + (Y_SHIP)/8;
+            backgroundVertices[15] = 0.25 + (Y_SHIP)/8;
         }
 
-
-        // Moving astroids
-        for(var i = 0; i < NUM_ASTROIDS; i++)
-        {
-        if(astroidVertices[i][4] >= 1.5 || astroidVertices[i][20] <= -1.5 ||
-            astroidVertices[i][1] >= 1.5 || astroidVertices[i][9] <= -1.5)
-        {
-            astroidAngle[i] = astroidAngle[i] + (180 - (astroidAngle[i]%90)*2);
-        }
-        var movex = Math.cos((astroidAngle[i] + 90) * (Math.PI / 180))*.01;
-        var movey = Math.sin((astroidAngle[i] + 90) * (Math.PI / 180))*.01;
-        X_ASTROID[i] += movex;
-        Y_ASTROID[i] += movey;
-        for(q = 0; q < 8; q++)
-        {
-            astroidVertices[i][q*4]   += movex;
-            astroidVertices[i][q*4+1] += movey;
-        }
+        // Moving asteroids.
+        for(var i = 0; i < NUM_ASTROIDS; i++) {
+            if(astroidVertices[i][4] >= 1.5 || astroidVertices[i][20] <= -1.5 || astroidVertices[i][1] >= 1.5 || astroidVertices[i][9] <= -1.5) {
+                astroidAngle[i] = astroidAngle[i] + (180 - (astroidAngle[i]%90)*2);
+            }
+            var movex = Math.cos((astroidAngle[i] + 90) * (Math.PI / 180))*.01;
+            var movey = Math.sin((astroidAngle[i] + 90) * (Math.PI / 180))*.01;
+            X_ASTROID[i] += movex;
+            Y_ASTROID[i] += movey;
+            for(q = 0; q < 8; q++) {
+                astroidVertices[i][q*4]   += movex;
+                astroidVertices[i][q*4+1] += movey;
+            }
         }
 
-        // Astroid-Ship collisiton detection using circle collison algorithm
-        for(var i = 0; i < NUM_ASTROIDS; i++)
-        {
-        var circle1 = {radius: .05, x: X_SHIP, y: Y_SHIP};
-        var circle2 = {radius: .16, x: X_ASTROID[i], y: Y_ASTROID[i]};
-        var dx = circle1.x - circle2.x;
-        var dy = circle1.y - circle2.y;
-        var distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < circle1.radius + circle2.radius)
-        {
-            deathSound.play();
-            // document.getElementById("Title").innerHTML = "GAME OVER.  " +
-            //                                         "\"Cntl + R\" to play again.";
-            // document.getElementById("Score").innerHTML = "Score: " + scoreCounter;
-            stillAlive = false;
-        }
+        // Asteroid-Ship collisiton detection using circle collison algorithm.
+        for(var i = 0; i < NUM_ASTROIDS; i++) {
+            var circle1 = {radius: .05, x: X_SHIP, y: Y_SHIP};
+            var circle2 = {radius: .16, x: X_ASTROID[i], y: Y_ASTROID[i]};
+            var dx = circle1.x - circle2.x;
+            var dy = circle1.y - circle2.y;
+            var distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < circle1.radius + circle2.radius) {
+                deathSound.play();
+                // document.getElementById("Title").innerHTML = "GAME OVER.  " +
+                //                                         "\"Cntl + R\" to play again.";
+                // document.getElementById("Score").innerHTML = "Score: " + scoreCounter;
+                stillAlive = false;
+            }
         }
 
-        // Astroid-Laser collisiton detection using circle collison algorithm
-        if(inRange)
-        {
-            for(var i = 0; i < NUM_ASTROIDS; i++)
-            {
+        // Astroid-Laser collisiton detection using circle collison algorithm.
+        if(inRange) {
+            for(var i = 0; i < NUM_ASTROIDS; i++) {
                 var circle1 = {radius: .16, x: X_ASTROID[i], y: Y_ASTROID[i]};
                 var circle2 = {radius: 0, x: laserVertices[0], y: laserVertices[1]};
                 var dx = circle1.x - circle2.x;
                 var dy = circle1.y - circle2.y;
                 var distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < circle1.radius + circle2.radius)
-                {
-                astroidSound.play();
-                initAstroidBuffers(gl, i);
-                scoreCounter++;
-                if((scoreCounter+1) % 10  == 1 )
-                {
-                    tenPointsSound.play();
-                    // Future implementation: add more astroids to game here.
-                }
-                // document.getElementById("Score").innerHTML = "Score: " + scoreCounter;
+                if (distance < circle1.radius + circle2.radius) {
+                    astroidSound.play();
+                    initAstroidBuffers(gl, i);
+                    scoreCounter++;
+                    if((scoreCounter+1) % 10  == 1 ) {
+                        tenPointsSound.play();
+                        // Future implementation: add more astroids to game here.
+                    }
+                    // document.getElementById("Score").innerHTML = "Score: " + scoreCounter;
                 }
             }
         }
 
-        // Future implementation: Astroid-Astroid collison.
-
+        // Possible future implementation: Astroid-Astroid collison.
         // //Astroid-Astroid collisiton using circle collison algorithm
         // var points = [];
         // for(var j = 0; j < NUM_ASTROIDS; j++)
@@ -441,55 +394,55 @@ function main()
         //   }
         // }
 
-
-        // Drawing and rendering handled here.
         // Making sure the textures are loaded prior to drawing.
-        if(g_texUnit0 && g_texUnit1 && g_texUnit3)
-        {
-        drawBackground(gl, num_background, modelMatrix, u_ModelMatrix);
-        drawShip(gl, num_ship_vertices, currentAngle, modelMatrix, u_ModelMatrix);
-        drawAstroids(gl, num_astroid_vertices, modelMatrix, u_ModelMatrix);
+        if(g_texUnit0 && g_texUnit1 && g_texUnit3) {
+            drawBackground(gl, num_background, modelMatrix, u_ModelMatrix);
+            drawShip(gl, num_ship_vertices, currentAngle, modelMatrix, u_ModelMatrix);
+            drawAstroids(gl, num_astroid_vertices, modelMatrix, u_ModelMatrix);
         }
 
         // Drawing laser.
-        if(inRange)
-        {
-        var xAdj = Math.cos((laserAngle + 90) * (Math.PI / 180))
-        var yAdj = Math.sin((laserAngle + 90) * (Math.PI / 180))
-        laserVertices[0] = X_SHIP + xAdj * 0.075 * laserCounter;
-        laserVertices[1] = Y_SHIP + yAdj * 0.075 * laserCounter;
-        laserVertices[2] = X_SHIP + xAdj * 0.075 * laserCounter - xAdj * 0.1;
-        laserVertices[3] = Y_SHIP + yAdj * 0.075 * laserCounter - yAdj * 0.1;
-        var xTester = laserVertices[0];
-        var yTester = laserVertices[1];
-        if(xTester > 1.0 || xTester < -1.0 || yTester > 1.0 || yTester < -1.0)
-        {
-            inRange = false;
-            laserCounter = 0;
-        }
-        else
-        {
-            drawlaser(gl, 2, laserAngle, modelMatrix, u_ModelMatrix);
-        }
-        laserCounter += 1;
+        if(inRange) {
+            var xAdj = Math.cos((laserAngle + 90) * (Math.PI / 180))
+            var yAdj = Math.sin((laserAngle + 90) * (Math.PI / 180))
+            laserVertices[0] = X_SHIP + xAdj * 0.075 * laserCounter;
+            laserVertices[1] = Y_SHIP + yAdj * 0.075 * laserCounter;
+            laserVertices[2] = X_SHIP + xAdj * 0.075 * laserCounter - xAdj * 0.1;
+            laserVertices[3] = Y_SHIP + yAdj * 0.075 * laserCounter - yAdj * 0.1;
+            var xTester = laserVertices[0];
+            var yTester = laserVertices[1];
+            if(xTester > 1.0 || xTester < -1.0 || yTester > 1.0 || yTester < -1.0) {
+                inRange = false;
+                laserCounter = 0;
+            }
+            else {
+                drawlaser(gl, 2, laserAngle, modelMatrix, u_ModelMatrix);
+            }
+            laserCounter += 1;
         }
 
-        if(stillAlive)
-        {
-        requestAnimationFrame(tick, canvas); //Request that the browser calls tick
+        // Keep running the tick function.
+        if(stillAlive) {
+            requestAnimationFrame(tick, canvas);  //Request that the browser calls tick
+        }
+        else{
+            var ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#FF0000";
+            ctx.fillRect(0, 0, 300, 300);
         }
     };
-    tick();
+    // tick();
+    mainmenu();
 }
 
 /**
  * Handles drawing the space background.
  *
  *
- * @param {RenderingContext} gl variable holding the rendering context for WebGL
- * @param {Int} num_background number of vertices for the background
- * @param {Matrix4} modelMatrix 4x4 matrix
- * @param {Mat4} u_ModelMatrix shader program 4x4 matrix
+ * @param {RenderingContext} gl variable holding the rendering context for WebGL.
+ * @param {Int} num_background number of vertices for the background.
+ * @param {Matrix4} modelMatrix 4x4 matrix.
+ * @param {Mat4} u_ModelMatrix shader program 4x4 matrix.
  */
 
 function drawBackground(gl, num_background, modelMatrix, u_ModelMatrix)
@@ -515,11 +468,11 @@ function drawBackground(gl, num_background, modelMatrix, u_ModelMatrix)
  * Handles rendering and drawing for the ship.
  *
  *
- * @param {RenderingContext} gl variable holding the rendering context for WebGL
- * @param {Int} num_ship_vertices number of vertices for the ship
- * @param {Int} currentAngle current angle of the ship
- * @param {Matrix4} modelMatrix 4x4 matrix
- * @param {Mat4} u_ModelMatrix shader program 4x4 matrix
+ * @param {RenderingContext} gl variable holding the rendering context for WebGL.
+ * @param {Int} num_ship_vertices number of vertices for the ship.
+ * @param {Int} currentAngle current angle of the ship.
+ * @param {Matrix4} modelMatrix 4x4 matrix.
+ * @param {Mat4} u_ModelMatrix shader program 4x4 matrix.
  */
 
 function drawShip(gl, num_ship_vertices, currentAngle, modelMatrix, u_ModelMatrix)
@@ -538,18 +491,18 @@ function drawShip(gl, num_ship_vertices, currentAngle, modelMatrix, u_ModelMatri
     gl.bindTexture(gl.TEXTURE_2D, texture0);
     // Draw.
     gl.uniform1i(u_Sampler, 0);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, num_ship_vertices); //was lineloop
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, num_ship_vertices);
 }
 
 /**
  * Handles rendering and drawing for the laser.
  *
  *
- * @param {RenderingContext} gl variable holding the rendering context for WebGL
- * @param {Int} num_laser_vertices number of vertices for the laser
- * @param {Int} laserAngle angle of the laser when it was first shot
- * @param {Matrix4} modelMatrix 4x4 matrix
- * @param {Mat4} u_ModelMatrix shader program 4x4 matrix
+ * @param {RenderingContext} gl variable holding the rendering context for WebGL.
+ * @param {Int} num_laser_vertices number of vertices for the laser.
+ * @param {Int} laserAngle angle of the laser when it was first shot.
+ * @param {Matrix4} modelMatrix 4x4 matrix.
+ * @param {Mat4} u_ModelMatrix shader program 4x4 matrix.
  */
 
 function drawlaser(gl, num_laser_vertices, laserAngle, modelMatrix, u_ModelMatrix)
@@ -573,10 +526,10 @@ function drawlaser(gl, num_laser_vertices, laserAngle, modelMatrix, u_ModelMatri
  * Handles rendering and drawing for the astroid.
  *
  *
- * @param {RenderingContext} gl variable holding the rendering context for WebGL
- * @param {Int} num_astroid_vertices number of vertices for the astroid
- * @param {Matrix4} modelMatrix 4x4 matrix
- * @param {Mat4} u_ModelMatrix shader program 4x4 matrix
+ * @param {RenderingContext} gl variable holding the rendering context for WebGL.
+ * @param {Int} num_astroid_vertices number of vertices for the astroid.
+ * @param {Matrix4} modelMatrix 4x4 matrix.
+ * @param {Mat4} u_ModelMatrix shader program 4x4 matrix.
  */
 
 function drawAstroids(gl, num_astroid_vertices, modelMatrix, u_ModelMatrix)
@@ -597,7 +550,7 @@ function drawAstroids(gl, num_astroid_vertices, modelMatrix, u_ModelMatrix)
         gl.enableVertexAttribArray(a_TexCoord);
         gl.uniform1i(u_Sampler, 1);
         // Draw.
-        gl.drawArrays(gl.TRIANGLE_FAN, 0, num_astroid_vertices);  // was line_loop
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, num_astroid_vertices);
     }
 }
 
@@ -605,8 +558,8 @@ function drawAstroids(gl, num_astroid_vertices, modelMatrix, u_ModelMatrix)
  * Initializes the laser buffer
  *
  *
- * @param {RenderingContext} gl variable holding the rendering context for WebGL
- * @param {Int} currentAngle current angle of the astroid
+ * @param {RenderingContext} gl variable holding the rendering context for WebGL.
+ * @param {Int} currentAngle current angle of the astroid.
  */
 
 function initlaserBuffer(gl, currentAngle)
@@ -620,11 +573,10 @@ function initlaserBuffer(gl, currentAngle)
         xlaser1, ylaser1 , 0.5, 0.5,
         xlaser2, ylaser2, 0.5, 0.5
     ]);
-    var num_laser_vertices_init = 2;   // The number of vertices.
+    var num_laser_vertices_init = 2;  // The number of vertices.
     // Create a buffer object.
     laserBuffer = gl.createBuffer();
-    if (!laserBuffer)
-    {
+    if (!laserBuffer) {
         console.log('Failed to create the buffer object');
         return -1;
     }
@@ -634,8 +586,7 @@ function initlaserBuffer(gl, currentAngle)
     gl.bufferData(gl.ARRAY_BUFFER, laserVertices, gl.STATIC_DRAW);
     // Assign the buffer object to a_Position variable.
     a_Position = gl.getAttribLocation(gl.program, 'a_Position');
-    if(a_Position < 0)
-    {
+    if(a_Position < 0) {
         console.log('Failed to get the storage location of a_Position');
         return -1;
     }
@@ -652,6 +603,7 @@ function initlaserBuffer(gl, currentAngle)
     return num_laser_vertices_init;
 }
 
+// TODO: needs better comments
 function initBackgroundBuffer(gl)
 {
     backgroundVertices = new Float32Array ([
@@ -660,11 +612,10 @@ function initBackgroundBuffer(gl)
         -1, 1,    0.25, 0.75,
         -1,-1,    0.25,0.25,
     ]);
-    var num_background_init = 4;   // The number of vertices.
-    // Create a buffer object
+    var num_background_init = 4;  // The number of vertices.
+    // Create a buffer object.
     backgroundBuffer = gl.createBuffer();
-    if (!backgroundBuffer)
-    {
+    if (!backgroundBuffer) {
         console.log('Failed to create the buffer object');
         return -1;
     }
@@ -674,8 +625,7 @@ function initBackgroundBuffer(gl)
     gl.bufferData(gl.ARRAY_BUFFER, backgroundVertices, gl.STATIC_DRAW);
     // Assign the buffer object to a_Position variable.
     a_Position = gl.getAttribLocation(gl.program, 'a_Position');
-    if(a_Position < 0)
-    {
+    if(a_Position < 0) {
         console.log('Failed to get the storage location of a_Position');
         return -1;
     }
@@ -694,10 +644,10 @@ function initBackgroundBuffer(gl)
 
 
 /**
- * Initializes the ship buffer
+ * Initializes the ship buffer.
  *
  *
- * @param {RenderingContext} gl variable holding the rendering context for WebGL
+ * @param {RenderingContext} gl variable holding the rendering context for WebGL.
  */
 function initShipBuffer(gl)
 {
@@ -707,11 +657,10 @@ function initShipBuffer(gl)
             0, 0.075,          0.5, 1,
         0.05, -0.05,    .66666666, 0
     ]);
-    var num_ship_vertices_init = 4;   // The number of vertices.
+    var num_ship_vertices_init = 4;  // The number of vertices.
     // Create a buffer object.
     shipBuffer = gl.createBuffer();
-    if (!shipBuffer)
-    {
+    if (!shipBuffer) {
         console.log('Failed to create the buffer object');
         return -1;
     }
@@ -719,10 +668,9 @@ function initShipBuffer(gl)
     gl.bindBuffer(gl.ARRAY_BUFFER, shipBuffer);
     // Write date into the buffer object.
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-    // Assign the buffer object to a_Position variable
+    // Assign the buffer object to a_Position variable.
     a_Position = gl.getAttribLocation(gl.program, 'a_Position');
-    if(a_Position < 0)
-    {
+    if(a_Position < 0) {
         console.log('Failed to get the storage location of a_Position');
         return -1;
     }
@@ -740,41 +688,34 @@ function initShipBuffer(gl)
 }
 
 /**
- * Initializes the astroid buffer
+ * Initializes the astroid buffer.
  *
  *
- * @param {RenderingContext} gl variable holding the rendering context for WebGL
- * @param {Int} index index of current astroid
+ * @param {RenderingContext} gl variable holding the rendering context for WebGL.
+ * @param {Int} index index of current astroid.
  */
-function initAstroidBuffers(gl, index)
-{
+function initAstroidBuffers(gl, index) {
     var num = Math.random();
     // Handles placing the astroid at a random point just outside the game window.
-    if(num > 0.5)
-    {
-        if(num > 0.75)
-        {
+    if(num > 0.5) {
+        if(num > 0.75) {
             //top
             X_ASTROID[index] = (num - 0.75) * 10 - 1.25;
             Y_ASTROID[index] =  1.25;
         }
-        else
-        {
+        else {
             //bottom
             X_ASTROID[index] = (num - 0.5) * 10 - 1.25;
             Y_ASTROID[index] = -1.25;
-            }
+        }
     }
-    else
-    {
-        if(num < 0.25)
-        {
+    else {
+        if(num < 0.25) {
             //left
             Y_ASTROID[index] = (num) * 10 - 1.25;
             X_ASTROID[index] = -1.25;
         }
-        else
-        {
+        else {
             //right
             Y_ASTROID[index] = (num - 0.25) * 10 - 1.25;
             X_ASTROID[index] = 1.25;
@@ -871,7 +812,7 @@ function initAstroidBuffers(gl, index)
  * Initializes the textures for the game.
  *
  *
- * @param {RenderingContext} gl variable holding the rendering context for WebGL
+ * @param {RenderingContext} gl variable holding the rendering context for WebGL.
  */
 function initTextures(gl) {
     // Creates texture objects.
@@ -879,7 +820,8 @@ function initTextures(gl) {
     texture1 = gl.createTexture();
     texture2 = gl.createTexture();
     texture3 = gl.createTexture();
-    if (!texture0 || !texture1 || !texture2 || !texture3) {
+    texture4 = gl.createTexture();
+    if (!texture0 || !texture1 || !texture2 || !texture3 || !texture4) {
         console.log('Failed to create the texture object');
         return false;
     }
@@ -890,13 +832,14 @@ function initTextures(gl) {
         return false;
     }
 
-    // Create the image objects
+    // Create the image objects.
     var imageShip = new Image();
     var imageAst = new Image();
     var imageYellow = new Image();
     var imageSpace = new Image();
-    // Set image Crossorigin to anonymous
-    if (!imageShip || !imageAst || !imageYellow || !imageSpace) {
+    var imageMainMenu = new Image();
+    // Set image Crossorigin to anonymous.
+    if (!imageShip || !imageAst || !imageYellow || !imageSpace || !imageMainMenu) {
         console.log('Failed to create the image object');
         return false;
     }
@@ -905,41 +848,44 @@ function initTextures(gl) {
     imageAst.onload = function(){ loadTexture(gl, texture1, imageAst, 1);};
     imageYellow.onload = function(){ loadTexture(gl, texture2, imageYellow, 2);};
     imageSpace.onload = function(){ loadTexture(gl, texture3, imageSpace, 3);};
+    imageMainMenu.onload = function(){ loadTexture(gl, texture4, imageMainMenu, 4);};
     // Tell the browser to load images.
     imageShip.src = './img/ship.jpg';
     imageAst.src = './img/astroid1.jpg';
     imageYellow.src = './img/yellow.jpg';
     imageSpace.src = './img/space.jpg';
+    imageMainMenu.src = './img/mainmenu.jpg';
     return true;
 }
 
 
 var g_texUnit0 = false, g_texUnit1 = false,
-    g_texUnit2 = false, g_texUnit3 = false;
+    g_texUnit2 = false, g_texUnit3 = false,
+    g_texUnit4 = false;
 
 function loadTexture(gl, texture, image, texUnit) {
     // Flip Y when unpacking.
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     // Make texture unit active.
-    if (texUnit == 0)
-    {
+    if (texUnit == 0) {
         gl.activeTexture(gl.TEXTURE0);
         g_texUnit0 = true;
     }
-    else if (texUnit == 1)
-    {
+    else if (texUnit == 1) {
         gl.activeTexture(gl.TEXTURE1);
         g_texUnit1 = true;
     }
-    else if (texUnit == 2)
-    {
+    else if (texUnit == 2) {
         gl.activeTexture(gl.TEXTURE2);
         g_texUnit2 = true;
     }
-    else
-    {
+    else if (texUnit == 3){
         gl.activeTexture(gl.TEXTURE3);
         g_texUnit3 = true;
+    }
+    else if (texUnit == 4){
+        gl.activeTexture(gl.TEXTURE4);
+        g_texUnit4 = true;
     }
     // Bind to target.
     gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -947,4 +893,33 @@ function loadTexture(gl, texture, image, texUnit) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     // Upload image to GPU.
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+}
+
+/**
+ * Handles drawing the main menu.
+ *
+ *
+ * @param {RenderingContext} gl variable holding the rendering context for WebGL.
+ * @param {Int} num_background number of vertices for the background.
+ * @param {Matrix4} modelMatrix 4x4 matrix.
+ * @param {Mat4} u_ModelMatrix shader program 4x4 matrix.
+ */
+
+function drawMainMenu(gl, num_background, modelMatrix, u_ModelMatrix)
+{
+    modelMatrix.setIdentity();
+    gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+    // Render the vertices.
+    gl.bindBuffer(gl.ARRAY_BUFFER, backgroundBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, backgroundVertices, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 4, 0);
+    gl.enableVertexAttribArray(a_Position);
+    // Render the texture vertices.
+    gl.vertexAttribPointer(a_TexCoord, 2, gl.FLOAT, false, FSIZE * 4, FSIZE * 2);
+    gl.enableVertexAttribArray(a_TexCoord);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture4);
+    gl.uniform1i(u_Sampler, 4);
+    // Draw.
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, num_background);
 }

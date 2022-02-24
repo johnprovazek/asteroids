@@ -65,11 +65,21 @@ html, body, #a {
     max-width: 500px;
 }
 
+#score{
+    position: absolute;
+    z-index:3;
+    top: 100px;
+    left: 60px;
+    pointer-events: none;
+    background-color: aqua;
+}
+
 #tv{
     position: absolute;
-    z-index:0;
+    z-index:2;
     top: -327px;
     left: -9px;
+    pointer-events: none;
 }
 
 #webgl{

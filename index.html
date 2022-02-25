@@ -4,6 +4,9 @@
         <meta charset="utf-8" />
         <title>asteroids</title>
         <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Exo+2:ital,wght@1,900&family=Passion+One:wght@700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/index.css">
     </head>
 
@@ -11,16 +14,12 @@
         <div id="a">
             <div id="b">
                 <div id="container">
-                    <canvas id="score" width="100" height="30"></canvas>
-                    <canvas id="tv"    width="518" height="655" ></canvas>
                     <canvas id="webgl" width="400" height="400" ></canvas>
+                    <canvas id="tv" width="518" height="655" ></canvas>
+                    <canvas id="overlay" width="400" height="400"></canvas>
                 </div>
             </div>
         </div>
-        <!-- <div id="container">
-            <canvas id="tv"    width="518" height="655" ></canvas>
-            <canvas id="webgl" width="400" height="400" ></canvas>
-        </div> -->
 
         <script src="./js/webgl-utils.js"></script>
         <script src="./js/webgl-debug.js"></script>

@@ -180,8 +180,9 @@ function main()
     var mainmenu = function()
     {
         // Drawing MainMenu
-        if(StartMenuActive && g_texUnit4) {
-            drawMainMenu(gl, num_background, modelMatrix, u_ModelMatrix);
+        if(StartMenuActive) {
+            drawBackground(gl, num_background, modelMatrix, u_ModelMatrix);
+            drawOverlay(scoreCounter, 1, 0)
         }
         requestAnimationFrame(mainmenu, canvas);
     }
@@ -362,6 +363,7 @@ function main()
                         tenPointsSound.play();
                         // Future implementation: add more astroids to game here.
                     }
+                    // Old method of keeping score:
                     // document.getElementById("Score").innerHTML = "Score: " + scoreCounter;
                 }
             }
@@ -399,6 +401,7 @@ function main()
             drawBackground(gl, num_background, modelMatrix, u_ModelMatrix);
             drawShip(gl, num_ship_vertices, currentAngle, modelMatrix, u_ModelMatrix);
             drawAstroids(gl, num_astroid_vertices, modelMatrix, u_ModelMatrix);
+            drawOverlay(scoreCounter, 0 , 0);
         }
 
         // Drawing laser.
@@ -426,9 +429,11 @@ function main()
             requestAnimationFrame(tick, canvas);  //Request that the browser calls tick
         }
         else{
-            var ctx = canvas.getContext("2d");
-            ctx.fillStyle = "#FF0000";
-            ctx.fillRect(0, 0, 300, 300);
+            // var ctx = canvas.getContext("2d");
+            // ctx.fillStyle = "#FF0000";
+            // ctx.fillRect(0, 0, 300, 300);
+            // drawBackground(gl, num_background, modelMatrix, u_ModelMatrix)
+            drawOverlay(scoreCounter, 0, 1)
         }
     };
     // tick();
@@ -820,8 +825,7 @@ function initTextures(gl) {
     texture1 = gl.createTexture();
     texture2 = gl.createTexture();
     texture3 = gl.createTexture();
-    texture4 = gl.createTexture();
-    if (!texture0 || !texture1 || !texture2 || !texture3 || !texture4) {
+    if (!texture0 || !texture1 || !texture2 || !texture3) {
         console.log('Failed to create the texture object');
         return false;
     }
@@ -848,13 +852,11 @@ function initTextures(gl) {
     imageAst.onload = function(){ loadTexture(gl, texture1, imageAst, 1);};
     imageYellow.onload = function(){ loadTexture(gl, texture2, imageYellow, 2);};
     imageSpace.onload = function(){ loadTexture(gl, texture3, imageSpace, 3);};
-    imageMainMenu.onload = function(){ loadTexture(gl, texture4, imageMainMenu, 4);};
     // Tell the browser to load images.
     imageShip.src = './img/ship.jpg';
     imageAst.src = './img/astroid1.jpg';
     imageYellow.src = './img/yellow.jpg';
     imageSpace.src = './img/space.jpg';
-    imageMainMenu.src = './img/mainmenu.jpg';
     return true;
 }
 
@@ -883,10 +885,6 @@ function loadTexture(gl, texture, image, texUnit) {
         gl.activeTexture(gl.TEXTURE3);
         g_texUnit3 = true;
     }
-    else if (texUnit == 4){
-        gl.activeTexture(gl.TEXTURE4);
-        g_texUnit4 = true;
-    }
     // Bind to target.
     gl.bindTexture(gl.TEXTURE_2D, texture);
     // Set texture parameters.
@@ -896,30 +894,43 @@ function loadTexture(gl, texture, image, texUnit) {
 }
 
 /**
- * Handles drawing the main menu.
+ * Handles drawing the score.
  *
  *
- * @param {RenderingContext} gl variable holding the rendering context for WebGL.
- * @param {Int} num_background number of vertices for the background.
- * @param {Matrix4} modelMatrix 4x4 matrix.
- * @param {Mat4} u_ModelMatrix shader program 4x4 matrix.
+ * @param {Int} cur_score current game score
+ * @param {Int} isMainMenu set to true when main menu
+ * @param {Int} isGameOver set to true when game is over
  */
+function drawOverlay(cur_score, isMainMenu, isGameOver){
+    var score_canvas = document.getElementById("overlay");
+    var context = score_canvas.getContext("2d");
+    context.clearRect(0, 0, score_canvas.width, score_canvas.height);
+    context.fillStyle = "#E3AD40";
+    if(isMainMenu) {
+        context.font = "bold 60px Courier Prime";
+        context.fillText("Asteroids", 38, 70);
+        context.font = "bold 30px Courier Prime";
+        context.fillText("WASD to move", 92, 160);
+        context.fillText("Mouse to aim", 91, 190);
+        context.fillText("Left-click to shoot", 30, 220);
+        context.fillText("Press Space to start", 20, 250);
+    }
+    else {
+        if(isGameOver) {
+            context.font = "bold 60px Courier Prime";
+            context.fillText("Game Over", 38, 210);
+        }
+        context.font = "bold 30px Courier Prime";
+        var score_text = "Score: " + cur_score
+        context.fillText(score_text, 20, 36);
+    } 
+}
 
-function drawMainMenu(gl, num_background, modelMatrix, u_ModelMatrix)
-{
-    modelMatrix.setIdentity();
-    gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-    // Render the vertices.
-    gl.bindBuffer(gl.ARRAY_BUFFER, backgroundBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, backgroundVertices, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 4, 0);
-    gl.enableVertexAttribArray(a_Position);
-    // Render the texture vertices.
-    gl.vertexAttribPointer(a_TexCoord, 2, gl.FLOAT, false, FSIZE * 4, FSIZE * 2);
-    gl.enableVertexAttribArray(a_TexCoord);
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture4);
-    gl.uniform1i(u_Sampler, 4);
-    // Draw.
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, num_background);
+/**
+ * Bigboi setup
+ *
+ *
+ */
+function setup(){
+    
 }

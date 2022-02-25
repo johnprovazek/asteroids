@@ -5,6 +5,9 @@ html{
     user-select: none; /* Standard */
     background-image: url("../img/geom.png");
     background-repeat: repeat;
+    font-family: 'Courier Prime', monospace;
+    font-family: 'Exo 2', sans-serif;
+    font-family: 'Passion One', cursive;
 }
 
 /* #container {
@@ -57,21 +60,17 @@ html, body, #a {
     vertical-align: middle;
 }
 
-
-
 #container {
     position: relative;
     margin: auto;
     max-width: 500px;
 }
 
-#score{
+#webgl{
     position: absolute;
-    z-index:3;
-    top: 100px;
-    left: 60px;
-    pointer-events: none;
-    background-color: aqua;
+    z-index:1;
+    top: -261px;
+    left: 50px;
 }
 
 #tv{
@@ -82,9 +81,10 @@ html, body, #a {
     pointer-events: none;
 }
 
-#webgl{
+#overlay{
     position: absolute;
-    z-index:1;
+    z-index:3;
     top: -261px;
     left: 50px;
+    pointer-events: none;
 }

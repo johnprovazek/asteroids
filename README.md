@@ -13,14 +13,10 @@ If you would like to access my website it can be found at [johnprovazek.com/aste
 
 ## Usage
 
-
-### Controls: 
-
 - WASD to move.
 - Mouse to aim.
-- Left-click to shoot. 
-
-To restart the game you will need to refresh the page.
+- Left-click to shoot.
+- Press Space to start
 
 ## Credits
 
@@ -32,12 +28,6 @@ Guide: Interactive 3D Graphics Programming with WebGL" writen by Kouichi Matsuda
 - cuon-utils.js
 - webgl-debug.js
 - webgl-utils.js
-
-## Bugs & Improvements
-
-- The first few moves of the game will push the ship out too far.
-- Fix code so you don't need to refresh to replay.
-- Implement a leaderboard.
 
 ## License
 

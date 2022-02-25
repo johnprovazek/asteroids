@@ -50,17 +50,13 @@ var astroidSound = new Audio('./sound/astcrash.mp3');  // Asteroid hit sound.
 var deathSound = new Audio('./sound/death.mp3');  // Ship hit sounds.
 var tenPointsSound = new Audio('./sound/10points.wav');  // Sound played every 10 points.
 var loopMusicSound = new Audio('../sound/loopmusic.mp3');  // Background game music.
+loopMusicSound.loop = true;
 var StartMenuActive = true; // Boolean value set to true when the start menu is active
+var GameOverMenuActive = false; // Boolean value set to true when the game over menu is active
 
 // Main function triggered onload.
 function main()
 {
-    // Configure background game music.
-    loopMusicSound.loop = true;
-    document.body.addEventListener("mousemove", function () {
-        // loopMusicSound.play()
-    })
-
     // Setting up canvas for TV wrapper.
     var tv_canvas = document.getElementById('tv'),
     tv_context = tv_canvas.getContext('2d');
@@ -86,29 +82,48 @@ function main()
         return;
     }
 
-    // Initializes ship.
-    var num_ship_vertices = initShipBuffer(gl);
-    if (num_ship_vertices < 0) {
-        console.log('Failed to set the positions of the vertices');
-        return;
-    }
+    var num_ship_vertices;
+    var num_astroid_vertices;
+    var num_background;
+    var currentAngle;
+    var keyState = {65: false, 68: false, 83: false, 87: false}; // Holds data on the state of keypresses.
+    var speedX = 0.0;           // Speed of the ship in the X direction.
+    var speedY = 0.0;           // Speed of the ship in the Y direction.
 
-    // Initializes astroids.
-    var num_astroid_vertices
-    for(var i = 0; i < NUM_ASTROIDS; i++) {
-        num_astroid_vertices = initAstroidBuffers(gl, i);
-        if (num_astroid_vertices < 0) {
-            console.log('Failed to set the positions of the astroids');
+    // Setup.
+    var setup = function()
+    {
+        // Initializes ship.
+        num_ship_vertices = initShipBuffer(gl);
+        if (num_ship_vertices < 0) {
+            console.log('Failed to set the positions of the vertices');
             return;
         }
-    }
+        // Initializes astroids.
+        for(var i = 0; i < NUM_ASTROIDS; i++) {
+            num_astroid_vertices = initAstroidBuffers(gl, i);
+            if (num_astroid_vertices < 0) {
+                console.log('Failed to set the positions of the astroids');
+                return;
+            }
+        }
+        // Initializes the moving space background.
+        num_background = initBackgroundBuffer(gl);
+        if (num_background < 0) {
+            console.log('Failed to set up the background properly');
+            return;
+        }
+        
+        currentAngle = 0.0; // Setting current rotation angle.
+        X_SHIP = 0.0;       // Setting X-coordinate of ship.
+        Y_SHIP = 0.0;       // Setting Y-coordinate of ship.
+        speedX = 0.0;           // Speed of the ship in the X direction.
+        speedY = 0.0;           // Speed of the ship in the Y direction.
+        scoreCounter = 0;   // Number of astroids hit.
+        keyState = {65: false, 68: false, 83: false, 87: false};      // Holds data on the state of keypresses.
 
-    // Initializes the moving space background.
-    var num_background = initBackgroundBuffer(gl);
-    if (num_background < 0) {
-        console.log('Failed to set up the background properly');
-        return;
     }
+    setup();
 
     // Sets up all the textures for the game.
     if (!initTextures(gl)) {
@@ -123,39 +138,45 @@ function main()
         return;
     }
 
-    // Setting current rotation angle.
-    var currentAngle = 0.0;
-
     // Model matrix.
     var modelMatrix = new Matrix4();
-
-    // Holds data on the state of keypresses.
-    var keyState = {};
 
     // Event Listener to start the game when an Enter is pressed.
     document.addEventListener("keypress", function(event) {
         if(StartMenuActive && event.keyCode == 32){
+            loopMusicSound.play()
             tick();
             StartMenuActive = false;
         }
+        else if(GameOverMenuActive && event.keyCode == 32){
+            loopMusicSound.play()
+            stillAlive = true;
+            setup();
+            tick();
+            GameOverMenuActive = false;
+        }
         // Configure background game music.
-        // loopMusicSound.loop = true;
-        // loopMusicSound.play()
     });
 
     // Event listener for keydown.
     document.addEventListener('keydown',function(e) {
-        keyState[e.keyCode || e.which] = true;
+        if(e.keyCode == 87 || e.keyCode == 65 || e.keyCode == 83 || e.keyCode == 68){
+            keyState[e.keyCode] = true;
+        }
     },true);
 
     // Event listener for keyup.
     document.addEventListener('keyup',function(e) {
-        keyState[e.keyCode || e.which] = false;
+        if(e.keyCode == 87 || e.keyCode == 65 || e.keyCode == 83 || e.keyCode == 68){
+            keyState[e.keyCode] = false;
+        }
     },true);
 
     // Event listener for mouse clicks.
     document.addEventListener('click',function(e) {
-        triggerPull = true;
+        if(!StartMenuActive && !GameOverMenuActive){
+            triggerPull = true;
+        }
     },true);
 
     // Event listener for mouse movement.
@@ -169,8 +190,6 @@ function main()
     var isStoppedXright = true; // Is the ship stopped in the right direction.
     var isStoppedYup = true;    // Is the ship stopped in the up direction.
     var isStoppedYdown = true;  // Is the ship stopped in the down direction.
-    var speedX = 0.0;           // Speed of the ship in the X direction.
-    var speedY = 0.0;           // Speed of the ship in the Y direction.
     var inRange = false;        // Is the laser still in the range of the screen.
     var laserCounter = 1;       // Keeps track of how far the laser has traveled.
     var laserAngle;             // Angle of the laser when it was first shot.
@@ -179,12 +198,23 @@ function main()
     // Main menu loop.
     var mainmenu = function()
     {
-        // Drawing MainMenu
+        // Drawing main menu
         if(StartMenuActive) {
             drawBackground(gl, num_background, modelMatrix, u_ModelMatrix);
             drawOverlay(scoreCounter, 1, 0)
         }
         requestAnimationFrame(mainmenu, canvas);
+    }
+
+    // Game over loop.
+    var gameover = function()
+    {
+        // Drawing game over menu
+        if(GameOverMenuActive) {
+            // drawBackground(gl, num_background, modelMatrix, u_ModelMatrix);
+            drawOverlay(scoreCounter, 0, 1)
+        }
+        requestAnimationFrame(gameover, canvas);
     }
 
     // Main game loop.
@@ -202,8 +232,6 @@ function main()
             laserAngle = currentAngle;
         }
 
-        // TODO: Error with first couple ship movements and code could be more efficient.
-        // Handling moving ship.
         // Moving ship left.
         if (keyState[65]) {
             X_SHIP = X_SHIP + speedX;
@@ -226,17 +254,6 @@ function main()
             }
             isStoppedXright = false;
         }
-        //  Moving ship down.
-        if (keyState[83]) {
-            Y_SHIP = Y_SHIP + speedY;
-            if(speedY > -0.02) {
-                speedY = speedY - 0.001;
-            }
-            if(Y_SHIP < -1.0) {
-                Y_SHIP = -1.0;
-            }
-            isStoppedYdown = false;
-        }
         //  Moving ship up.
         if (keyState[87]) {
             Y_SHIP = Y_SHIP + speedY;
@@ -247,6 +264,17 @@ function main()
                 Y_SHIP = 1.0;
             }
             isStoppedYup = false;
+        }
+        //  Moving ship down.
+        if (keyState[83]) {
+            Y_SHIP = Y_SHIP + speedY;
+            if(speedY > -0.02) {
+                speedY = speedY - 0.001;
+            }
+            if(Y_SHIP < -1.0) {
+                Y_SHIP = -1.0;
+            }
+            isStoppedYdown = false;
         }
         // Stopping ship left.
         if (keyState[65] == false && isStoppedXleft == false && keyState[68] == false) {
@@ -274,19 +302,6 @@ function main()
                 X_SHIP = 1.0;
             }
         }
-        // Stopping ship down.
-        if (keyState[83] == false && isStoppedYdown == false && keyState[87] == false) {
-            Y_SHIP = Y_SHIP + speedY
-            if(speedY < 0.0) {
-                speedY = speedY + 0.001;
-            }
-            if(speedY == 0.0) {
-                isStoppedYdown == true;
-            }
-            if(Y_SHIP < -1.0) {
-                Y_SHIP = -1.0;
-            }
-        }
         // Stopping ship up.
         if (keyState[87] == false && isStoppedYup == false && keyState[83] == false) {
             Y_SHIP = Y_SHIP + speedY;
@@ -300,6 +315,32 @@ function main()
                 Y_SHIP = 1.0;
             }
         }
+        // Stopping ship down.
+        if (keyState[83] == false && isStoppedYdown == false && keyState[87] == false) {
+            Y_SHIP = Y_SHIP + speedY
+            if(speedY < 0.0) {
+                speedY = speedY + 0.001;
+            }
+            if(speedY == 0.0) {
+                isStoppedYdown == true;
+            }
+            if(Y_SHIP < -1.0) {
+                Y_SHIP = -1.0;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Moving background in the X direction.
         if(isStoppedXleft == false || isStoppedXright == false) {
@@ -429,11 +470,10 @@ function main()
             requestAnimationFrame(tick, canvas);  //Request that the browser calls tick
         }
         else{
-            // var ctx = canvas.getContext("2d");
-            // ctx.fillStyle = "#FF0000";
-            // ctx.fillRect(0, 0, 300, 300);
-            // drawBackground(gl, num_background, modelMatrix, u_ModelMatrix)
-            drawOverlay(scoreCounter, 0, 1)
+            loopMusicSound.pause()
+            loopMusicSound.currentTime = 0;
+            GameOverMenuActive = true;
+            gameover();
         }
     };
     // tick();
@@ -919,18 +959,11 @@ function drawOverlay(cur_score, isMainMenu, isGameOver){
         if(isGameOver) {
             context.font = "bold 60px Courier Prime";
             context.fillText("Game Over", 38, 210);
+            context.font = "bold 15px Courier Prime";
+            context.fillText("Press Space to start", 110, 380);
         }
         context.font = "bold 30px Courier Prime";
         var score_text = "Score: " + cur_score
         context.fillText(score_text, 20, 36);
     } 
-}
-
-/**
- * Bigboi setup
- *
- *
- */
-function setup(){
-    
 }

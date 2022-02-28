@@ -75,7 +75,7 @@ html, body, #a {
 
 #tv{
     position: absolute;
-    z-index:2;
+    z-index:5;
     top: -327px;
     left: -9px;
     pointer-events: none;
@@ -87,4 +87,27 @@ html, body, #a {
     top: -261px;
     left: 50px;
     pointer-events: none;
+}
+
+#glare{
+    position: absolute;
+    z-index:4;
+    top: -261px;
+    left: 50px;
+    pointer-events: none;
+}
+
+#mobile {
+    visibility: hidden;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 2em;
+}
+#mobile, #mobile a {
+    color: #5D564E;
 }

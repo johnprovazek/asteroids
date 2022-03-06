@@ -425,33 +425,6 @@ function main()
             }
         }
 
-        // Possible future implementation: Astroid-Astroid collison.
-        // //Astroid-Astroid collisiton using circle collison algorithm
-        // var points = [];
-        // for(var j = 0; j < NUM_ASTROIDS; j++)
-        // {
-        //   points[j*2]   = X_ASTROID[j];
-        //   points[j*2+1] = Y_ASTROID[j];
-        // }
-        // for(var i = 0; i < NUM_ASTROIDS; i++)
-        // {
-        //   for(var k = 0; k < NUM_ASTROIDS; k++)
-        //   {
-        //     if(i!=k)
-        //     {
-        //       //var dx = circle1.x - circle2.x;
-        //       var dx = points[i*2] - points[k*2];
-        //       //var dy = circle1.y - circle2.y;
-        //       var dx = points[k*2+1] - points[k*2+1];
-        //       var distance = Math.sqrt(dx * dx + dy * dy);
-        //       if (distance < .26)
-        //       {
-        //          //what to put here
-        //       }
-        //     }
-        //   }
-        // }
-
         // Making sure the textures are loaded prior to drawing.
         if(g_texUnit0 && g_texUnit1 && g_texUnit3) {
             drawBackground(gl, num_background, modelMatrix, u_ModelMatrix);

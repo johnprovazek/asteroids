@@ -2,10 +2,10 @@
 
 ## Description
 
-This project is a recreation and expanded upon version of the classic Atari 2600 game Asteroids.
+This project is inspired by the classic Atari 2600 game Asteroids.
 This project was developed for a computer graphics course at CSU Chico. 
 
-Built using vanilla javascript and WebGL.
+Built using vanilla JavaScript and WebGL.
 
 ## Installation
 

@@ -10,36 +10,6 @@ html{
     font-family: 'Passion One', cursive;
 }
 
-/* #container {
-    position: relative;
-    margin: auto;
-    max-width: 500px;
-}
-
-#tv{
-    position: absolute;
-    z-index:0;
-    vertical-align: middle;
-}
-
-#webgl{
-    position: absolute;
-    z-index:1;
-    top: 66px;
-    left: 59px;
-} */
-
-
-
-
-
-
-
-
-
-
-
-
 html, body, #a {
     margin: 0;
     padding: 0;
@@ -73,17 +43,9 @@ html, body, #a {
     left: 50px;
 }
 
-#tv{
-    position: absolute;
-    z-index:5;
-    top: -327px;
-    left: -9px;
-    pointer-events: none;
-}
-
 #overlay{
     position: absolute;
-    z-index:3;
+    z-index:2;
     top: -261px;
     left: 50px;
     pointer-events: none;
@@ -91,9 +53,17 @@ html, body, #a {
 
 #glare{
     position: absolute;
-    z-index:4;
+    z-index:3;
     top: -261px;
     left: 50px;
+    pointer-events: none;
+}
+
+#tv{
+    position: absolute;
+    z-index:4;
+    top: -327px;
+    left: -9px;
     pointer-events: none;
 }
 

@@ -28,7 +28,3 @@ Guide: Interactive 3D Graphics Programming with WebGL" writen by Kouichi Matsuda
 - cuon-utils.js
 - webgl-debug.js
 - webgl-utils.js
-
-## License
-
-No License for now until I have a better understanding of this. Would like this to be free for non commercial use.

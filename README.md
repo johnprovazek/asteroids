@@ -21,7 +21,7 @@ If you would like to access my website it can be found at [johnprovazek.com/aste
 ## Credits
 
 The following resources were taken from the book "WebGL Programming
-Guide: Interactive 3D Graphics Programming with WebGL" writen by Kouichi Matsuda
+Guide: Interactive 3D Graphics Programming with WebGL" written by Kouichi Matsuda
 & Rodger Lea:
 
 - cuon-matrix.js

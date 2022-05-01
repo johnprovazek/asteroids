@@ -935,24 +935,26 @@ function drawOverlay(cur_score, isMainMenu, isGameOver){
     context.clearRect(0, 0, score_canvas.width, score_canvas.height);
     context.fillStyle = "#E3AD40";
     if(isMainMenu) {
-        context.font = "bold 60px Courier Prime";
-        context.fillText("Asteroids", 38, 70);
-        context.font = "bold 30px Courier Prime";
-        context.fillText("WASD to move", 92, 160);
-        context.fillText("Mouse to aim", 91, 190);
-        context.fillText("Left-click to shoot", 30, 220);
-        context.fillText("Press Space to start", 20, 250);
+        context.textBaseline = "middle";
+        context.textAlign = "center";
+        context.font = "700 3.2rem Courier Prime";
+        context.fillText("Asteroids", score_canvas.width/2, 40);
+        context.font = "700 1.6rem Courier Prime";
+        context.fillText("WASD to move", score_canvas.width/2, 160);
+        context.fillText("Mouse to aim", score_canvas.width/2, 190);
+        context.fillText("Left-click to shoot", score_canvas.width/2, 220);
+        context.fillText("Press Space to start", score_canvas.width/2, 250);
     }
     else {
         if(isGameOver) {
-            context.font = "bold 60px Courier Prime";
-            context.fillText("Game Over", 38, 210);
-            context.font = "bold 15px Courier Prime";
-            context.fillText("Press Space to start", 110, 380);
+            context.font = "700 3.2rem Courier Prime";
+            context.fillText("Game Over", score_canvas.width/2, 210);
+            context.font = "700 0.8rem Courier Prime";
+            context.fillText("Press Space to start", score_canvas.width/2, 380);
         }
-        context.font = "bold 30px Courier Prime";
+        context.font = "700 1.6rem Courier Prime";
         var score_text = "Score: " + cur_score
-        context.fillText(score_text, 20, 36);
+        context.fillText(score_text, score_canvas.width/2, 36);
     }
 }
 

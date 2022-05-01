@@ -32,8 +32,9 @@ Guide: Interactive 3D Graphics Programming with WebGL" written by Kouichi Matsud
 ## Bugs & Improvements
 
 - Display "Not optimized for mobile devices" on iPad.
-- Fix streched font on iPad
+- Fix stretched font on iPad
 - Test on small monitor, TV will likely be bigger than screen and be cut off.
+- Use a linter and a style guide
 
 ## Device Tests
 

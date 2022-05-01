@@ -29,7 +29,7 @@ Guide: Interactive 3D Graphics Programming with WebGL" written by Kouichi Matsud
 - webgl-debug.js
 - webgl-utils.js
 
-## Bugs & Improvments
+## Bugs & Improvements
 
 - Display "Not optimized for mobile devices" on iPad.
 - Fix streched font on iPad

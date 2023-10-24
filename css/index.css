@@ -1,90 +1,96 @@
+@font-face {
+  font-family: CourierPrimeBold;
+  src: url("../fonts/CourierPrimeBold.ttf");
+}
+
 html{
-    -webkit-user-select: none; /* Safari */        
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE10+/Edge */
-    user-select: none; /* Standard */
-    background-image: url("../img/geom.png");
-    background-repeat: repeat;
-    font-family: 'Courier Prime', monospace;
-    font-family: 'Exo 2', sans-serif;
-    font-family: 'Passion One', cursive;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-image: url("../img/background.png");
+  background-repeat: repeat;
+  font-family: CourierPrimeBold;
 }
 
 html, body, #a {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
 }
 
 #a {
-    display: table;
+  display: table;
 }
 
 #b {
-    display: table-cell;
-    margin: 0;
-    padding: 0;
-
-    text-align: center;
-    vertical-align: middle;
+  display: table-cell;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
 }
 
 #container {
-    position: relative;
-    margin: auto;
-    max-width: 500px;
+  position: relative;
+  margin: auto;
+  max-width: 500px;
 }
 
 #webgl{
-    position: absolute;
-    z-index:1;
-    top: -261px;
-    left: 50px;
+  position: absolute;
+  z-index:1;
+  top: -261px;
+  left: 50px;
 }
 
 #overlay{
-    position: absolute;
-    z-index:2;
-    top: -261px;
-    left: 50px;
-    pointer-events: none;
+  position: absolute;
+  z-index:2;
+  top: -261px;
+  left: 50px;
+  pointer-events: none;
 }
 
 #glare{
-    position: absolute;
-    z-index:3;
-    top: -261px;
-    left: 50px;
-    pointer-events: none;
+  position: absolute;
+  z-index:3;
+  top: -261px;
+  left: 50px;
+  pointer-events: none;
 }
 
 #tv{
-    position: absolute;
-    z-index:4;
-    top: -327px;
-    left: -9px;
-    pointer-events: none;
+  position: absolute;
+  z-index:4;
+  top: -327px;
+  left: -9px;
+  pointer-events: none;
 }
 
 #mobile {
-    visibility: hidden;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
-    font-size: 2em;
+  visibility: hidden;
+  fill: #5D564E;
+  position: absolute;
+  top: 325px;
+  left: 0;
+  right: 0;
+  font-weight: bold;
+  font-size: 25px;
 }
 #mobile, #mobile a {
-    color: #5D564E;
+  color: #5D564E;
 }
 
-#githubimage{
-    position: absolute;
-    z-index:5;
-    top: 272px;
-    left: 332px;
+#github{
+  position: absolute;
+  z-index:5;
+  top: 260px;
+  left: 295px;
+}
+
+.hidden{
+  visibility: hidden !important;
 }

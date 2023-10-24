@@ -2,7 +2,7 @@
 
 ## Description
 
-This project is inspired by the classic Atari 2600 game Asteroids.
+This project is inspired by the classic video game [Asteroids](https://en.wikipedia.org/wiki/Asteroids_(video_game)).
 This project was developed for a computer graphics course at CSU Chico. 
 
 Built using vanilla JavaScript and WebGL.
@@ -20,17 +20,21 @@ If you would like to access my website it can be found at [johnprovazek.com/aste
 
 ## Credits
 
-The following resources were taken from the book "WebGL Programming
-Guide: Interactive 3D Graphics Programming with WebGL" written by Kouichi Matsuda
+The following resources were taken from the book [WebGL Programming
+Guide: Interactive 3D Graphics Programming with WebGL](https://www.oreilly.com/library/view/webgl-programming-guide/9780133364903/) written by Kouichi Matsuda
 & Rodger Lea:
+- [cuon-matrix.js](./js/resources/cuon-matrix.js)
+- [cuon-utils.js](./js/resources/cuon-utils.js)
+- [webgl-debug.js](./js/resources/webgl-debug.js)
+- [webgl-utils.js](./js/resources/webgl-utils.js)
 
-- cuon-matrix.js
-- cuon-utils.js
-- webgl-debug.js
-- webgl-utils.js
+The main game music was created by [Eric Matyas](https://soundimage.org/)
+
+The main game sound effects were taken from the video game [Xevious](https://en.wikipedia.org/wiki/Xevious)
 
 ## Bugs & Improvements
 
-- Improve the font style consistency across devices and browsers.
-- Test on a small monitor, TV will likely be bigger than the screen and be cut off.
+- Create custom music and sound effects.
+- Add a high score system linked to a cloud provider.
+- Increase the amount of asteroids as the game progresses.
 - Use a linter and a style guide.

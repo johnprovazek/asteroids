@@ -152,13 +152,13 @@ return {
  */
 window.requestAnimFrame = (function() {
   return window.requestAnimationFrame ||
-         window.webkitRequestAnimationFrame ||
-         window.mozRequestAnimationFrame ||
-         window.oRequestAnimationFrame ||
-         window.msRequestAnimationFrame ||
-         function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
-           return window.setTimeout(callback, 1000/60);
-         };
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
+      return window.setTimeout(callback, 1000/60);
+    };
 })();
 
 /**
@@ -166,11 +166,11 @@ window.requestAnimFrame = (function() {
  */
 window.cancelAnimFrame = (function() {
   return window.cancelAnimationFrame ||
-         window.webkitCancelAnimationFrame ||
-         window.mozCancelAnimationFrame ||
-         window.oCancelAnimationFrame ||
-         window.msCancelAnimationFrame ||
-         window.clearTimeout;
+    window.webkitCancelAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    window.oCancelAnimationFrame ||
+    window.msCancelAnimationFrame ||
+    window.clearTimeout;
 })();
 
 

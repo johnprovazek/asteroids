@@ -1,38 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <!-- <meta name="viewport" content="width=device-width,initial-scale=1.0"> -->
-        <title>asteroids</title>
-        <link rel="icon" type="image/x-icon" href="img/favicon.ico">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Exo+2:ital,wght@1,900&family=Passion+One:wght@700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="css/index.css">
-    </head>
-
-    <body onload="main()">
-        <div id="a">
-            <div id="b">
-                <div id="container">
-                    <canvas id="webgl" width="400" height="400" ></canvas>
-                    <canvas id="tv" width="518" height="655" ></canvas>
-                    <canvas id="overlay" width="400" height="400"></canvas>
-                    <canvas id="glare" width="400" height="400"></canvas>
-                    <a href="https://github.com/johnprovazek/asteroids">
-                        <img id="githubimage" src="img/github.svg" width="60" height="16"/>
-                    </a>
-                </div>
-            </div>
+  <head>
+    <meta charset="utf-8" />
+    <title>asteroids</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Exo+2:ital,wght@1,900&family=Passion+One:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+  </head>
+  <body onload="main()">
+    <div id="a">
+      <div id="b">
+        <div id="container">
+          <canvas id="webgl" width="400" height="400" ></canvas>
+          <canvas id="tv" width="518" height="655" ></canvas>
+          <canvas id="overlay" width="400" height="400"></canvas>
+          <canvas id="glare" width="400" height="400"></canvas>
+          <a href="https://github.com/johnprovazek/asteroids" class="hidden">
+            <img id="github" src="img/github.svg" width="100" height="25"/>
+          </a>
+          <svg id="mobile" class="hidden" viewBox="0 0 500 50" xmlns="http://www.w3.org/2000/svg">
+            <text x="50%" y ="50%" dominant-baseline="middle" text-anchor="middle">Not optimized for mobile devices</text>
+          </svg>
         </div>
-        <div id="mobile">
-            Not optimized for mobile devices
-        </div>
-
-        <script src="./js/webgl-utils.js"></script>
-        <script src="./js/webgl-debug.js"></script>
-        <script src="./js/cuon-utils.js"></script>
-        <script src="./js/cuon-matrix.js"></script>
-        <script src="./js/index.js"></script>
-    </body>
+      </div>
+    </div>
+    <script src="./js/resources/webgl-utils.js"></script>
+    <script src="./js/resources/webgl-debug.js"></script>
+    <script src="./js/resources/cuon-utils.js"></script>
+    <script src="./js/resources/cuon-matrix.js"></script>
+    <script src="./js/index.js"></script>
+  </body>
 </html>

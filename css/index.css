@@ -1,96 +1,85 @@
 @font-face {
-  font-family: CourierPrimeBold;
-  src: url("../fonts/CourierPrimeBold.ttf");
+  font-family: "CourierPrimeBold";
+  src: local("CourierPrimeBold"), url("../fonts/CourierPrimeBold.woff2") format("woff2"),
+    url("../fonts/CourierPrimeBold.otf") format("opentype");
 }
 
-html{
+html {
+  font-family: "CourierPrimeBold";
   overflow: hidden;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  background-image: url("../img/background.png");
+  background-image: url("../images/background.png");
   background-repeat: repeat;
-  font-family: CourierPrimeBold;
 }
 
-html, body, #a {
+body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
 }
 
-#a {
-  display: table;
+.hidden {
+  visibility: hidden;
 }
 
-#b {
-  display: table-cell;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-  vertical-align: middle;
+#centered-container {
+  position: absolute;
+  height: 655px;
+  width: 518px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
-#container {
+#game-container {
   position: relative;
-  margin: auto;
-  max-width: 500px;
 }
 
-#webgl{
+#webgl {
   position: absolute;
-  z-index:1;
-  top: -261px;
-  left: 50px;
+  z-index: 1;
+  top: 66px;
+  left: 59px;
 }
 
-#overlay{
+#tv {
   position: absolute;
-  z-index:2;
-  top: -261px;
-  left: 50px;
+  z-index: 4;
   pointer-events: none;
 }
 
-#glare{
+#overlay {
   position: absolute;
-  z-index:3;
-  top: -261px;
-  left: 50px;
+  z-index: 2;
+  top: 66px;
+  left: 59px;
   pointer-events: none;
 }
 
-#tv{
+#glare {
   position: absolute;
-  z-index:4;
-  top: -327px;
-  left: -9px;
+  z-index: 3;
+  top: 66px;
+  left: 59px;
   pointer-events: none;
+}
+
+#github {
+  position: absolute;
+  z-index: 5;
+  top: 584px;
+  left: 302px;
 }
 
 #mobile {
-  visibility: hidden;
-  fill: #5D564E;
   position: absolute;
-  top: 325px;
-  left: 0;
-  right: 0;
+  width: 518px;
+  fill: #5d564e;
+  top: 654px;
   font-weight: bold;
   font-size: 25px;
-}
-#mobile, #mobile a {
-  color: #5D564E;
-}
-
-#github{
-  position: absolute;
-  z-index:5;
-  top: 260px;
-  left: 295px;
-}
-
-.hidden{
-  visibility: hidden !important;
 }

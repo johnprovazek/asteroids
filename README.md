@@ -5,7 +5,13 @@
 This project was inspired by the classic video game [Asteroids](<https://en.wikipedia.org/wiki/Asteroids_(video_game)>).
 This was developed for a computer graphics course at California State University, Chico. This project can be accessed at [johnprovazek.com/asteroids](https://www.johnprovazek.com/asteroids).
 
-Built using vanilla JavaScript and WebGL.
+Built using vanilla JavaScript and the WebGL library.
+
+<div align="center">
+  <picture>
+    <img src="https://github.com/user-attachments/assets/8cec674f-7c11-4c5e-94b5-e7b0c242607f" width="830px">
+  </picture>
+</div>
 
 ## Usage
 

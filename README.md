@@ -9,7 +9,7 @@ Built using vanilla JavaScript and the WebGL library.
 
 <div align="center">
   <picture>
-    <img src="https://github.com/user-attachments/assets/8cec674f-7c11-4c5e-94b5-e7b0c242607f" width="830px">
+    <img src="https://repository-images.githubusercontent.com/122114924/72ce3734-08ec-4266-8f8d-ee14bfcf8546" width="830px">
   </picture>
 </div>
 
